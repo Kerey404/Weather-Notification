@@ -1,43 +1,71 @@
 package facade;
 
 import builder.User;
-import core.*;
+import core.WeatherStation;
+import core.WeatherUpdateStrategy;
+import core.observer.MultiCountryObserver;
 import core.observer.UserObserver;
-import core.strategies.*;
+import core.strategies.APIWeatherStrategy;
+import core.strategies.ManualWeatherStrategy;
+import core.strategies.RandomWeatherStrategy;
+import adapters.APIWeatherAdapter;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class WeatherFacade {
-    private WeatherStation station =
-            new WeatherStation(new RandomWeatherStrategy());
+    private final User user;
+    private final WeatherStation station;
+    private final UserObserver observer;
+    private final Scanner sc = new Scanner(System.in);
 
-    public void registerUser(User user) {
-        station.addObserver(new UserObserver(user));
-        System.out.println("✅ User " + user + " registered.");
-        station.updateWeather(user.getCity());
+    private WeatherUpdateStrategy strategy;
+
+    public WeatherFacade(User user) {
+        this.user = user;
+        this.strategy = new RandomWeatherStrategy();
+        this.station = new WeatherStation(strategy);
+        this.observer = new UserObserver(user);
+        this.station.attach(observer);
     }
 
-    public void showCurrentWeather(User user) {
-        station.updateWeather(user.getCity());
+    public void updateWeather() {
+        station.notifyObservers(user.getCity());
     }
 
-    public void showMultiCountryWeather(User user) {
-        String[] countries = {"Astana", "Tokyo", "Paris", "Berlin", "London"};
-        for (String c : countries)
-            station.updateWeather(c);
-    }
-
-    public void changeStrategy() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Choose strategy (1-Random, 2-API, 3-Manual): ");
-        int ch = sc.nextInt();
+    public void switchStrategy() {
+        System.out.println("Choose strategy:");
+        System.out.println("1. Random");
+        System.out.println("2. Manual");
+        System.out.println("3. API");
+        System.out.print("Select: ");
+        int choice = sc.nextInt();
         sc.nextLine();
 
-        switch (ch) {
-            case 1 -> station.setStrategy(new RandomWeatherStrategy());
-            case 2 -> station.setStrategy(new APIWeatherStrategy());
-            case 3 -> station.setStrategy(new ManualWeatherStrategy());
-            default -> System.out.println("Unknown strategy!");
+        switch (choice) {
+            case 1 -> strategy = new RandomWeatherStrategy();
+            case 2 -> strategy = new ManualWeatherStrategy();
+            case 3 -> strategy = new APIWeatherStrategy(new APIWeatherAdapter());
+            default -> {
+                System.out.println("Invalid option, keeping previous strategy.");
+                return;
+            }
         }
-        System.out.println("✅ Strategy updated successfully!");
+        station.setStrategy(strategy);
+        System.out.println("✅ Strategy switched successfully!");
+    }
+
+    public void changeCity() {
+        System.out.print("Enter new city: ");
+        String newCity = sc.nextLine();
+        user.setCity(newCity);
+        System.out.println("🏙️ City updated to " + newCity);
+    }
+
+    public void showMultiCountryWeather() {
+        List<String> countries = Arrays.asList("Astana", "Almaty", "London", "New York", "Tokyo");
+        MultiCountryObserver multi = new MultiCountryObserver(strategy);
+        multi.showAll(countries);
     }
 }

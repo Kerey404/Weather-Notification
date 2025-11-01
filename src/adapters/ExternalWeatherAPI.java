@@ -3,9 +3,11 @@ package adapters;
 import java.util.Random;
 
 public class ExternalWeatherAPI {
-    public String fetchWeather(String city) {
-        double temp = new Random().nextDouble() * 40 - 10;
-        double wind = new Random().nextDouble() * 15;
-        return city + ";" + temp + ";" + wind;
+    private final Random random = new Random();
+
+    public String requestWeather(String city) {
+        int temp = random.nextInt(40) - 5;
+        String[] cond = {"☀️ Clear", "🌧️ Rain", "❄️ Snow", "🌫️ Fog"};
+        return city + ": " + cond[random.nextInt(cond.length)] + " (" + temp + "°C)";
     }
 }

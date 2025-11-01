@@ -1,14 +1,17 @@
 package core.strategies;
 
 import adapters.APIWeatherAdapter;
-import core.UpdateStrategy;
-import core.WeatherData;
+import core.WeatherUpdateStrategy;
 
-public class APIWeatherStrategy implements UpdateStrategy {
-    private final APIWeatherAdapter adapter = new APIWeatherAdapter();
+public class APIWeatherStrategy implements WeatherUpdateStrategy {
+    private final APIWeatherAdapter adapter;
+
+    public APIWeatherStrategy(APIWeatherAdapter adapter) {
+        this.adapter = adapter;
+    }
 
     @Override
-    public WeatherData update(String city) {
+    public String updateWeather(String city) {
         return adapter.getWeather(city);
     }
 }

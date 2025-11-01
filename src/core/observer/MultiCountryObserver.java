@@ -1,22 +1,19 @@
 package core.observer;
 
-import core.WeatherData;
+import core.WeatherUpdateStrategy;
 import java.util.List;
 
-public class MultiCountryObserver implements Observer {
-    private final String userName;
-    private final List<String> countries;
+public class MultiCountryObserver {
+    private final WeatherUpdateStrategy strategy;
 
-    public MultiCountryObserver(String userName, List<String> countries) {
-        this.userName = userName;
-        this.countries = countries;
+    public MultiCountryObserver(WeatherUpdateStrategy strategy) {
+        this.strategy = strategy;
     }
 
-    @Override
-    public void update(WeatherData data) {
-        System.out.println("\n🌍 " + userName + " получает погоду для нескольких стран:");
-        for (String country : countries) {
-            System.out.println(" - " + country + ": " + data);
+    public void showAll(List<String> countries) {
+        System.out.println("🌎 Multi-country weather report:");
+        for (String c : countries) {
+            System.out.println(strategy.updateWeather(c));
         }
     }
 }

@@ -1,15 +1,14 @@
-import builder.*;
-import core.*;
-import core.observer.*;
+import builder.User;
+import builder.UserBuilder;
 import facade.WeatherFacade;
+
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        WeatherFacade facade = new WeatherFacade();
 
-        System.out.println("=== Weather Notification System ===");
+        System.out.println("=== 🌤️ Welcome to Weather Notification System ===");
         System.out.print("Enter your name: ");
         String name = sc.nextLine();
 
@@ -21,27 +20,29 @@ public class Main {
                 .setCity(city)
                 .build();
 
-        facade.registerUser(user);
-
-        System.out.println("\n1. Watch current city weather");
-        System.out.println("2. Watch multiple countries' weather");
-        System.out.println("3. Switch strategy (Random / API / Manual)");
-        System.out.println("4. Exit");
+        WeatherFacade facade = new WeatherFacade(user);
 
         while (true) {
-            System.out.print("\nSelect: ");
+            System.out.println("\n========= MENU =========");
+            System.out.println("1. Get current weather");
+            System.out.println("2. Switch update strategy");
+            System.out.println("3. Change city");
+            System.out.println("4. Show multi-country weather");
+            System.out.println("5. Exit");
+            System.out.print("Choose option: ");
             int choice = sc.nextInt();
             sc.nextLine();
 
             switch (choice) {
-                case 1 -> facade.showCurrentWeather(user);
-                case 2 -> facade.showMultiCountryWeather(user);
-                case 3 -> facade.changeStrategy();
-                case 4 -> {
-                    System.out.println("Bye!");
+                case 1 -> facade.updateWeather();
+                case 2 -> facade.switchStrategy();
+                case 3 -> facade.changeCity();
+                case 4 -> facade.showMultiCountryWeather();
+                case 5 -> {
+                    System.out.println("👋 Goodbye, " + user.getName() + "!");
                     return;
                 }
-                default -> System.out.println("Invalid!");
+                default -> System.out.println("Invalid option!");
             }
         }
     }

@@ -1,18 +1,16 @@
 package core.observer;
 
 import builder.User;
-import core.WeatherData;
 
 public class UserObserver implements Observer {
-    private User user;
+    private final User user;
 
     public UserObserver(User user) {
         this.user = user;
     }
 
     @Override
-    public void update(WeatherData data) {
-        System.out.println("📢 " + user.getName() + ", weather update in " +
-                user.getCity() + ": " + data);
+    public void update(String weatherInfo) {
+        System.out.println("📩 Notification for " + user.getName() + ": " + weatherInfo);
     }
 }

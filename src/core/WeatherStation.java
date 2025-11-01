@@ -1,41 +1,29 @@
 package core;
 
-import core.observer.*;
+import core.observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeatherStation implements Subject {
-    private List<Observer> observers = new ArrayList<>();
-    private UpdateStrategy strategy;
-    private WeatherData data;
+public class WeatherStation {
+    private final List<Observer> observers = new ArrayList<>();
+    private WeatherUpdateStrategy strategy;
 
-    public WeatherStation(UpdateStrategy strategy) {
+    public WeatherStation(WeatherUpdateStrategy strategy) {
         this.strategy = strategy;
     }
 
-    public void setStrategy(UpdateStrategy strategy) {
+    public void setStrategy(WeatherUpdateStrategy strategy) {
         this.strategy = strategy;
     }
 
-    public void updateWeather(String city) {
-        this.data = strategy.update(city);
-        notifyObservers();
+    public void attach(Observer observer) {
+        observers.add(observer);
     }
 
-    @Override
-    public void addObserver(Observer o) {
-        observers.add(o);
-    }
-
-    @Override
-    public void removeObserver(Observer o) {
-        observers.remove(o);
-    }
-
-    @Override
-    public void notifyObservers() {
+    public void notifyObservers(String city) {
+        String weather = strategy.updateWeather(city);
         for (Observer o : observers) {
-            o.update(data);
+            o.update(weather);
         }
     }
 }

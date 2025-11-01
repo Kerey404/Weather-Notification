@@ -12,8 +12,10 @@ public class User {
     public String getName() { return name; }
     public String getCity() { return city; }
 
+    public void setCity(String city) { this.city = city; }
+
     @Override
     public String toString() {
-        return name + " from " + city;
+        return "User{name='" + name + "', city='" + city + "'}";
     }
 }
